@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="brand">✦ Clariq</div>
+
+    <h1>Welcome back!</h1>
+    <p class="sub">Simplify your workflow and boost your productivity with <strong>Clariq</strong>. Get started for free.</p>
+
+    <p id="message"></p>
+
+    <div class="input-group">
+      <input type="email" id="email" placeholder="Email" />
+    </div>
+
+    <div class="input-group">
+      <input type="password" id="password" placeholder="Password" />
+      <button class="eye-btn" onclick="togglePassword()" title="Toggle password">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="forgot">Forgot Password?</div>
+
+    <button class="btn-login" onclick="login()">Login</button>
+
+    <div class="register-line">Not a member? <a href="signup.html">Register now</a></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="right-text">
+      <h2>Clear your tasks with<br><strong>Clariq</strong>.</h2>
+    </div>
+  </div>
+
+  <script>
+    function togglePassword() {
+      const input = document.getElementById('password');
+      input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    async function login() {
+      const email    = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const msg      = document.getElementById('message');
+
+      try {
+        const res  = await fetch('http://localhost:3000/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          localStorage.setItem('token', data.token);
+          window.location.href = 'tasks.html';
+        } else {
+          msg.style.color = '#c0392b';
+          msg.textContent = data.error || 'Login failed.';
+        }
+      } catch (err) {
+        msg.style.color = '#c0392b';
+        msg.textContent = 'Could not connect to server.';
+      }
+    }
+  </script>
+</body>
+</html>
